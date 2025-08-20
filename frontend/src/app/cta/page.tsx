@@ -1,7 +1,8 @@
 'use client'
+import ContextToggle from "@/components/ContextToggle";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
-
+import ReactMarkdown from 'react-markdown';
 interface Message {
   role: "user" | "model";
   content: string;
@@ -12,6 +13,7 @@ export default function Chatbot() {
   const [input, setInput] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [contextEnabled, setContextEnabled] = useState<Boolean>(true);
 
   const sendMessage = async () => {
 
@@ -25,7 +27,7 @@ export default function Chatbot() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        messages: messages.concat({ role: "user", content: userMessage }),
+        messages: contextEnabled ? messages.concat({ role: "user", content: userMessage }) : [{role: "user", content: userMessage}]
       })
     })
 
@@ -43,7 +45,9 @@ export default function Chatbot() {
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">
         Chat with AI
       </h1>
-
+      <ContextToggle onChange={setContextEnabled}/>
+      <div className="flex text-center">
+      </div>
       <div className="flex-1 border rounded p-2 mb-4 overflow-y-auto h-[60vh] flex flex-col gap-2">
         {messages.map((msg, index) => (
           <div
@@ -53,7 +57,11 @@ export default function Chatbot() {
                 : "bg-gray-200 text-black self-start"
               }`}
           >
+            <div className="prose prose-invert">
+            <ReactMarkdown>
             {msg.content}
+            </ReactMarkdown>
+            </div>
           </div>
         ))}
         <div ref={chatEndRef} />
