@@ -14,6 +14,7 @@ class TokenRequest(BaseModel):
     model: str
     text: str
     detailed: bool = False
+    output_tokens: int = 256
 
 @router.post("/")
 async def calculate_tokens(request: TokenRequest):
@@ -33,11 +34,19 @@ async def calculate_tokens(request: TokenRequest):
     unit_divisor = 1000 if pricing["unit"] == "1K" else 1_000_000
     cost_usd = (token_count / unit_divisor) * pricing["input"]
 
+    # Input And Output Cost Separately
+    input_cost_usd = (token_count / unit_divisor) * pricing["input"]
+    output_cost_usd = (request.output_tokens / unit_divisor) * pricing["output"]
+    total_cost_usd = input_cost_usd + output_cost_usd
+
+
     return {
         "model": request.model,
         "provider": provider,
         "input_tokens": token_count,
-        "output_tokens": 0,  # placeholder for now
-        "cost_usd": round(cost_usd, 6),
+        "output_tokens": request.output_tokens,
+        "input_cost_usd": round(input_cost_usd, 6),
+        "output_cost_usd": round(output_cost_usd, 6),
+        "cost_usd": round(total_cost_usd, 6),
         "breakdown": breakdown if request.detailed else None
     }
