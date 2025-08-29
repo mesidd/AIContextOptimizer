@@ -11,25 +11,32 @@ interface Message {
 }
 
 // --- CUSTOM TYPEWRITER HOOK ---
-const useTypewriter = (text: string, speed = 25) => {
-  const [displayText, setDisplayText] = useState('');
+
+const useTypewriter = (text: string, speed = 50) => {
+  const [displayText, setDisplayText] = useState("");
+
   useEffect(() => {
-    setDisplayText('');
+    setDisplayText("");
+
     if (text) {
-      let i = 0;
-      const typingInterval = setInterval(() => {
-        if (i < text.length) {
-          setDisplayText(prev => prev + text.charAt(i));
-          i++;
-        } else {
-          clearInterval(typingInterval);
-        }
+      const intervalId = setInterval(() => {
+
+        setDisplayText((currentText) => {
+          if (currentText.length === text.length) {
+            clearInterval(intervalId);
+            return currentText;
+          }
+
+          return text.substring(0, currentText.length + 1);
+        });
       }, speed);
-      return () => clearInterval(typingInterval);
+
+      return () => clearInterval(intervalId);
     }
-  }, [text, speed]);
+  }, [text, speed]); 
   return displayText;
 };
+
 
 // --- CHAT MESSAGE COMPONENT ---
 const ChatMessage = ({ message }: { message: Message }) => {
@@ -45,10 +52,10 @@ const ChatMessage = ({ message }: { message: Message }) => {
       )}
       <div
         className={`max-w-[75%] p-3 rounded-2xl shadow-lg break-words transition-all duration-300 ${ // Padding reduced to p-3
-          isUser 
-            ? 'bg-gradient-to-br from-violet-600 to-purple-700 text-white' 
+          isUser
+            ? 'bg-gradient-to-br from-violet-600 to-purple-700 text-white'
             : 'bg-gray-800 text-gray-200'
-        }`}
+          }`}
       >
         <div className="prose prose-sm prose-invert max-w-none prose-p:my-1 prose-headings:my-2">
           <ReactMarkdown>{animatedContent}</ReactMarkdown>
@@ -65,18 +72,18 @@ const ChatMessage = ({ message }: { message: Message }) => {
 
 // --- LOADING INDICATOR ---
 const LoadingIndicator = () => (
-    <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800 shadow-lg">
-            <Bot size={20} className="text-violet-300" />
-        </div>
-        <div className="max-w-[75%] p-3 rounded-2xl bg-gray-800 text-gray-200 shadow-lg"> {/* Padding reduced to p-3 */}
-            <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-violet-400 rounded-full animate-pulse delay-0"></span>
-                <span className="w-2 h-2 bg-violet-400 rounded-full animate-pulse delay-150"></span>
-                <span className="w-2 h-2 bg-violet-400 rounded-full animate-pulse delay-300"></span>
-            </div>
-        </div>
+  <div className="flex items-start gap-4">
+    <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800 shadow-lg">
+      <Bot size={20} className="text-violet-300" />
     </div>
+    <div className="max-w-[75%] p-3 rounded-2xl bg-gray-800 text-gray-200 shadow-lg"> {/* Padding reduced to p-3 */}
+      <div className="flex items-center gap-2">
+        <span className="w-2 h-2 bg-violet-400 rounded-full animate-pulse delay-0"></span>
+        <span className="w-2 h-2 bg-violet-400 rounded-full animate-pulse delay-150"></span>
+        <span className="w-2 h-2 bg-violet-400 rounded-full animate-pulse delay-300"></span>
+      </div>
+    </div>
+  </div>
 );
 
 // --- MAIN PAGE COMPONENT ---
@@ -114,7 +121,7 @@ export default function Chatbot() {
       });
 
       if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
+        throw new Error(`HTTP error! status: ${res.status}`);
       }
 
       const data = await res.json();
@@ -144,19 +151,19 @@ export default function Chatbot() {
 
         {/* Controls */}
         <div className="px-4 py-3 bg-gray-900/50 border-b border-gray-800/50">
-            <label htmlFor="context-toggle" className="flex items-center justify-between cursor-pointer">
-                <span className="font-semibold text-white">Context Mode (Memory)</span>
-                <div className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors ${contextEnabled ? 'bg-violet-600' : 'bg-gray-700'}`}>
-                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${contextEnabled ? 'translate-x-6' : ''}`} />
-                </div>
-            </label>
-            <input 
-                id="context-toggle" 
-                type="checkbox" 
-                className="hidden" 
-                checked={!!contextEnabled} 
-                onChange={() => setContextEnabled(!contextEnabled)} 
-            />
+          <label htmlFor="context-toggle" className="flex items-center justify-between cursor-pointer">
+            <span className="font-semibold text-white">Context Mode (Memory)</span>
+            <div className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors ${contextEnabled ? 'bg-violet-600' : 'bg-gray-700'}`}>
+              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${contextEnabled ? 'translate-x-6' : ''}`} />
+            </div>
+          </label>
+          <input
+            id="context-toggle"
+            type="checkbox"
+            className="hidden"
+            checked={!!contextEnabled}
+            onChange={() => setContextEnabled(!contextEnabled)}
+          />
           <p className="text-xs text-gray-400 mt-2 flex items-center gap-1.5">
             <HelpCircle size={14} />
             {contextEnabled
@@ -182,7 +189,7 @@ export default function Chatbot() {
         </main>
 
         {/* Input Area */}
-        <footer 
+        <footer
           className="bg-gray-900/50 border-t border-gray-800/50 px-4 py-3 backdrop-blur-sm"
           onMouseEnter={() => inputRef.current?.focus()} // Auto-focus on mouse enter
         >
@@ -195,7 +202,6 @@ export default function Chatbot() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
               placeholder="Type your message..."
-              disabled={isLoading}
             />
             {/* Assuming Button component from shadcn/ui */}
             <Button

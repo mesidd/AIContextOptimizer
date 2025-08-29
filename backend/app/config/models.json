@@ -1,0 +1,17 @@
+{
+  "gpt-4-turbo": {
+    "provider": "openai",
+    "context_window": 128000,
+    "pricing": { "input": 0.01, "output": 0.03, "unit": "1K" }
+  },
+  "gemini-2.5-flash": {
+    "provider": "google",
+    "context_window": 1048576,
+    "pricing": { "input": 0.30, "output": 2.50, "unit": "1M" }
+  },
+  "claude-3.5-sonnet": {
+    "provider": "anthropic",
+    "context_window": 200000,
+    "pricing": { "input": 8.00, "output": 24.00, "unit": "1M" }
+  }
+}
