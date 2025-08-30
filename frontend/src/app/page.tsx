@@ -104,14 +104,14 @@ export default function Home() {
             Reduce token usage, benchmark AI models, and gain deep insights into your LLM performance.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
-            <a href='/chat'>
+            <a href='/tokens'>
               <CustomButton className="bg-gradient-to-br from-violet-600 to-purple-700 hover:opacity-90 shadow-lg shadow-purple-500/20 w-full sm:w-auto">
                 Get Started for Free
               </CustomButton>
             </a>
-            <a href='/demo'>
+            <a href='/chat'>
               <CustomButton className="bg-gray-700 hover:bg-gray-600 w-full sm:w-auto">
-                View Demo
+                Chat Bot
               </CustomButton>
             </a>
           </div>
