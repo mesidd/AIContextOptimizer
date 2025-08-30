@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 
 from app.routers import tokens
 
+from app.routers import tokens, optimizer
+
 load_dotenv()
 
 origins = [ "http://localhost:3000" ]
@@ -19,6 +21,7 @@ app = FastAPI(
 )
 
 app.include_router(tokens.router)
+app.include_router(optimizer.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,8 +35,6 @@ SYSTEM_INSTRUCTION = (
     "You are a helpful friend. Answer clearly, concisely, and politely."
     "Keep your answer in 1 or 2 lines only with few words."
 )
-
-
 
 try:
     api_key = os.getenv("GOOGLE_API_KEY")
